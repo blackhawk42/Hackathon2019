@@ -3,6 +3,20 @@ import socket
 import sqlite3
 import struct
 
+class Reporte:
+    def __init__(self, reporte_id, descripcion):
+        self.reporte_id = reporte_id
+        self.descripcion = descripcion
+    
+    def __str__(self):
+        if self.reporte_id is not None:
+            as_bytes = struct.pack('>I', self.reporte_id)
+            return 'Reporte {}-{}-{}-{}:\n  Descripcion:\n    {}'.format(as_bytes[0], as_bytes[1], as_bytes[2], as_bytes[3], self.descripcion)
+        else:
+            return 'Sin reporte'
+
+
+
 def get_municipio_nombre(municipios_id, db_connection):
     return db_connection.execute('SELECT nombre_municipio FROM municipios WHERE municipios_id = ?', (municipios_id,)).fetchone()[0]
 
@@ -15,7 +29,14 @@ def get_ciclista_correo(ciclista_id, db_connection):
 def get_bicileta_marca(bicicleta_id, db_connection):
     return db_connection.execute('SELECT marcabici FROM bicicleta WHERE bicicleta_id = ?', (bicicleta_id,)).fetchone()[0]
 
-
+def get_reporte(bicicleta_id, db_connection):
+    reporte_id = db_connection.execute('SELECT reportes_id FROM bicicleta WHERE bicicleta_id = ?', (bicicleta_id,)).fetchone()
+    if reporte_id is None:
+        return Reporte(None, '')
+    else:
+        reporte_id = int(reporte_id[0])
+        descripcion = db_connection.execute('SELECT descripcion FROM reportes WHERE reportes_id = ?', (reporte_id,)).fetchone()[0]
+        return Reporte(reporte_id, descripcion)
 
 class StateServerRequestHandler(socketserver.BaseRequestHandler):
     def __init__(self, request, client_address, server):
@@ -35,8 +56,12 @@ class StateServerRequestHandler(socketserver.BaseRequestHandler):
         ciclista = get_ciclista_nombre(ciclista_id, self.server.db_connection)
         correo = get_ciclista_correo(ciclista_id, self.server.db_connection)
         marca = get_bicileta_marca(bicicleta_id, self.server.db_connection)
+        reporte = get_reporte(bicicleta_id, self.server.db_connection)
 
-        print("NOMBRE: {}\nMUNICIPIO: {}\nMARCA DE BICILETA: {}\nCORREO: {}".format(ciclista, municipio, marca, correo))
+        print("Recivida solicitud de rastreo:\n")
+
+        print("  NOMBRE: {}\n  MUNICIPIO: {}\n  MARCA DE BICILETA: {}\n  CORREO: {}\n\n{}\n".format(ciclista, municipio, marca, correo, reporte))
+        print("\nNotificando al dueño y a las autoridades")
 
         
         

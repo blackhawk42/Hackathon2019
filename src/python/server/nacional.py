@@ -18,6 +18,9 @@ def remove_estado(estado_id, db_connection):
 def get_estado_direccion(estado_id, db_connection):
     return db_connection.execute('SELECT direccionestado FROM estados WHERE estado_id = ?', (estado_id,)).fetchone()[0]
 
+def get_estado_nombre(estado_id, db_connection):
+    return db_connection.execute('SELECT nombreestado FROM estados WHERE estado_id = ?', (estado_id,)).fetchone()[0]
+
 class NationalServerRequestHandler(socketserver.BaseRequestHandler):
     def __init__(self, request, client_address, server):
         socketserver.BaseRequestHandler.__init__(self, request, client_address, server)
@@ -32,23 +35,31 @@ class NationalServerRequestHandler(socketserver.BaseRequestHandler):
         if command == 1:
             decoded_data = data.decode('utf-8').split()
             add_estado(decoded_data[1], decoded_data[2], server.db_connection)
+            print("Estado agregado a la base de datos nacional: {}, ({})".format(decoded_data[1], decoded_data[2]))
+
         elif command == 2:
             decoded_data = data.decode('utf-8').split()
             remove_estado(decoded_data[1], server.db_connection)
+            print('Estado quitado de la base de datos nacional: ID {}'.format(decoded_data[1]))
+
         elif command == 3:
+            print("Recivida orden de rastreo de bicicleta")
             token = data[2:]
             estado_id = struct.unpack('>BIII', token)[0]
 
+            nombre = get_estado_nombre(estado_id, self.server.db_connection)
             direccion = get_estado_direccion(estado_id, self.server.db_connection)
+            print("--- Rastreo sera enviado a {} ({})".format(nombre, direccion))
 
             client = socket.socket()
             client.connect((direccion, 8081))
             client.sendall(token)
             client.close()
-            print("Forward successful")
+            print("--> Solicitud enviada exitosamente")
             
         elif command == 4:
             server.finish = True
+            print("Saliendo del servidor")
         else:
             print("Illigal state")
 
