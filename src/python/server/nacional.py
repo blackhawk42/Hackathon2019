@@ -1,5 +1,7 @@
 import socketserver
+import socket
 import sqlite3
+import struct
 
 def add_estado(nombre, direccion, db_connection):
     cur = db_connection.cursor()
@@ -24,20 +26,31 @@ class NationalServerRequestHandler(socketserver.BaseRequestHandler):
         return socketserver.BaseRequestHandler.setup(self)
     
     def handle(self):
-        data = self.request.recv(1024).decode('utf-8').split()
-        data[0] = int(data[0])
+        data = self.request.recv(1024)
+        command = int(data[0:1].decode('utf-8'))
         
-        if data[0] == 1:
-            try:
-                add_estado(data[1], data[2], server.db_connection)
-            except Exception as e:
-                print(e)
-        if data[0] == 2:
-            remove_estado(data[1], server.db_connection)
-        if data[0] == 3:
-            print(get_estado_direccion(int(data[1]), server.db_connection))
-        if data[0] == 4:
+        if command == 1:
+            decoded_data = data.decode('utf-8').split()
+            add_estado(decoded_data[1], decoded_data[2], server.db_connection)
+        elif command == 2:
+            decoded_data = data.decode('utf-8').split()
+            remove_estado(decoded_data[1], server.db_connection)
+        elif command == 3:
+            token = data[2:]
+            estado_id = struct.unpack('>BIII', token)[0]
+
+            direccion = get_estado_direccion(estado_id, self.server.db_connection)
+
+            client = socket.socket()
+            client.connect((direccion, 8081))
+            client.sendall(token)
+            client.close()
+            print("Forward successful")
+            
+        elif command == 4:
             server.finish = True
+        else:
+            print("Illigal state")
 
         
         

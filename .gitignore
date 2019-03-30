@@ -124,3 +124,6 @@ dmypy.json
 
 # Sqlite databases
 *.db
+
+# Misc utilities
+**/sendtoken.py

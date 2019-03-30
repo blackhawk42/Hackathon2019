@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ciclista
     direccion TEXT,
     telefono TEXT,
     correociclista TEXT,
-    contraseñaciclista TEXT
+    contrasenaciclista TEXT
 );
 
 
