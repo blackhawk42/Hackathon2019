@@ -108,8 +108,14 @@
 
 <?php
 $nameC = $_GET['nameC'];
+$emailC = $_GET['emailC'];
+$telNumber = $_GET['telNumber'];
+$direccionC = $_GET['direccionC'];
+$passwordC = $_GET['passwordC'];
+
+
 $db = new SQLite3('estatal.db');
-$sql = "INSERT INTO ciclista (nombre_ciclista, direccion, telefono, correociclista, contrasenaciclista) VALUES('$nameC', 'Rusia o algo, yo que se', '555-NUMERO-NO-DETERMINISTA', 'markov@example.com', '123');";
+$sql = "INSERT INTO ciclista (nombre_ciclista, direccion, telefono, correociclista, contrasenaciclista) VALUES('$nameC', '$direccionC', '$telNumber', '$emailC', '$passwordC');";
 $result = $db->query($sql);
 unset($db);
 ?>
