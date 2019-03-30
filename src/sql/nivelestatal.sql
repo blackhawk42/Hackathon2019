@@ -1,38 +1,37 @@
-
-CREATE TABLE reportes
+CREATE TABLE IF NOT EXISTS reportes
 (
-    reportesid INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- primary key column
-    descripcion NVARCHAR(255) NOT NULL
+    reportes_id INTEGER PRIMARY KEY AUTOINCREMENT, -- primary key column
+    descripcion TEXT
 );
 
 
-CREATE TABLE ciclista
+CREATE TABLE IF NOT EXISTS ciclista
 (
-    ciclistaid INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- primary key column
-    nombreCiclista NVARCHAR(255) NOT NULL,
-    direccion NVARCHAR(255),
-    telefono NVARCHAR(255),
-    correociclista NVARCHAR(255),
-    contraseñaciclista NVARCHAR(255)
+    ciclista_id INTEGER PRIMARY KEY AUTOINCREMENT, -- primary key column
+    nombre_ciclista TEXT NOT NULL,
+    direccion TEXT,
+    telefono TEXT,
+    correociclista TEXT,
+    contraseñaciclista TEXT
 );
 
 
-CREATE TABLE municipios
+CREATE TABLE IF NOT EXISTS municipios
 (
-    municipiosid INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- primary key column
-    nombreMunicipio NVARCHAR(255)
+    municipios_id INTEGER PRIMARY KEY AUTOINCREMENT, -- primary key column
+    nombre_municipio TEXT
 );
 
 
-CREATE TABLE bicicleta
+CREATE TABLE IF NOT EXISTS bicicleta
 (
-    bicicletaid INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- primary key column
-    marcabici NVARCHAR(255),
-    modelobici NVARCHAR(255),
-    no_serie NVARCHAR(255),
+    bicicleta_id INTEGER PRIMARY KEY AUTOINCREMENT, -- primary key column
+    marcabici TEXT,
+    modelobici TEXT,
+    no_serie TEXT,
     fotobici mediumblob,
-    ciclistaid INT, --FOREIGN KEY
-    reportesid INT, --FOREIGN KEy
-    FOREIGN KEY (ciclistaid) REFERENCES ciclista(ciclistaid),
-    FOREIGN KEY (reportesid) REFERENCES reportes(reportesid)
+    ciclista_id INTEGER, --FOREIGN KEY
+    reportes_id INTEGER, --FOREIGN KEy
+    FOREIGN KEY (ciclista_id) REFERENCES ciclista(ciclista_id),
+    FOREIGN KEY (reportes_id) REFERENCES reportes(reportes_id)
 );

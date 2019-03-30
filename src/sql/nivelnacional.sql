@@ -1,5 +1,5 @@
-CREATE TABLE estados(
-    estadoid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nombreestado VARCHAR(255) NOT NULL,
-    direccionestado VARCHAR(255)   
+CREATE TABLE IF NOT EXISTS estados(
+    estado_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombreestado TEXT NOT NULL,
+    direccionestado TEXT
 );
