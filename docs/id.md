@@ -1,4 +1,4 @@
-# Notación
+﻿# Notación
 Un byte será representado en formato hexadecimal: 0xBYTE. Por ejemplo,
 4 = 0x04.
 
@@ -78,3 +78,4 @@ Sintaxis para struct en Python:
 ```
 struct.pack('>BIII', estado_id, municipio_id, ciclista_id, bicicleta_id)
 ```
+Hack
