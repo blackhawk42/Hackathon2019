@@ -1,6 +1,21 @@
 import socketserver
 import sqlite3
 
+def add_estado(nombre, direccion, db_connection):
+    cur = db_connection.cursor()
+    cur.execute('INSERT INTO estados(nombreestado, direccionestado) VALUES (?, ?)', (nombre, direccion))
+    db_connection.commit()
+    cur.close()
+
+def remove_estado(estado_id, db_connection):
+    cur = db_connection.cursor()
+    cur.execute('DELETE FROM estados WHERE estado_id = ?', (estado_id,))
+    db_connection.commit()
+    cur.close()
+
+def get_estado_direccion(estado_id, db_connection):
+    return db_connection.execute('SELECT direccionestado FROM estados WHERE estado_id = ?', (estado_id,)).fetchone()[0]
+
 class NationalServerRequestHandler(socketserver.BaseRequestHandler):
     def __init__(self, request, client_address, server):
         socketserver.BaseRequestHandler.__init__(self, request, client_address, server)
@@ -9,7 +24,23 @@ class NationalServerRequestHandler(socketserver.BaseRequestHandler):
         return socketserver.BaseRequestHandler.setup(self)
     
     def handle(self):
-        pass
+        data = self.request.recv(1024).decode('utf-8').split()
+        data[0] = int(data[0])
+        
+        if data[0] == 1:
+            try:
+                add_estado(data[1], data[2], server.db_connection)
+            except Exception as e:
+                print(e)
+        if data[0] == 2:
+            remove_estado(data[1], server.db_connection)
+        if data[0] == 3:
+            print(get_estado_direccion(int(data[1]), server.db_connection))
+        if data[0] == 4:
+            server.finish = True
+
+        
+        
 
     def finish(self):
         return socketserver.BaseRequestHandler.finish(self)
@@ -18,6 +49,7 @@ class NationalServer(socketserver.TCPServer):
     def __init__(self, server_address, database_file, handler_class=NationalServerRequestHandler):
         socketserver.TCPServer.__init__(self, server_address, handler_class)
         self.db_connection = sqlite3.connect(database_file)
+        self.finish = False
         return
     
     def server_activate(self):
@@ -25,7 +57,7 @@ class NationalServer(socketserver.TCPServer):
         return
     
     def serve_forever(self):
-        while True:
+        while not self.finish:
             self.handle_request()
 
         return
