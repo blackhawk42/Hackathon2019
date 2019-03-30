@@ -23,7 +23,7 @@ with sqlite3.connect("reportados.db") as db:
         cur.execute('SELECT * FROM reportados')
         for row in cur:
             print("Encontre un reporte ID: {}".format(Report(row[0])))
-            print("-> Notificando al nivel estatal")
+            print("-> Notificando al nivel nacional")
             sock = socket.socket()
             sock.connect((SERVER, PORT))
             sock.sendall(b'3 ' + row[1])
