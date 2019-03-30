@@ -25,7 +25,7 @@
     <h4 class="card-title mt-3 text-center">Create Account</h4>
     <p class="text-center">Get started with your free account</p>
 
-    <form>
+    <form action="" method="get">
     <div class="form-group input-group">
         <div class="input-group-prepend">
             <span class="input-group-text"> <span class="glyphicon glyphicon-user"></span></span>
@@ -107,22 +107,9 @@
 </style>
 
 <?php
-$connect = sqlite_open('base_datos_sqlite/persona.db', 0666, $error);
- 
-if (!$connect)
-    die($error);
- 
-
-$name_es = sqlite_escape_string($name);
- 
-$sql = "INSERT INTO ciclista (nameC,direccionC,telNumber,emailC,passwordC) VALUES(?,?,?,?,?);";
- 
-$exec = sqlite_exec($connect, $sql);
-if (!$exec)
-    die("No se pudo ejecutar la sentencia SQL.");
- 
-echo "Registro ingresado exitosamente.";
- 
-//cerramos la conexion SQLite
-sqlite_close($connect);
+$nameC = $_GET['nameC'];
+$db = new SQLite3('estatal.db');
+$sql = "INSERT INTO ciclista (nombre_ciclista, direccion, telefono, correociclista, contrasenaciclista) VALUES('$nameC', 'Rusia o algo, yo que se', '555-NUMERO-NO-DETERMINISTA', 'markov@example.com', '123');";
+$result = $db->query($sql);
+unset($db);
 ?>
