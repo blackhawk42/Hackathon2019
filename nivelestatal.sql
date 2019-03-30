@@ -11,7 +11,9 @@ CREATE TABLE ciclista
     ciclistaid INT NOT NULL PRIMARY KEY AUTO_INCREMENT, -- primary key column
     nombreCiclista NVARCHAR(255) NOT NULL,
     direccion NVARCHAR(255),
-    telefono NVARCHAR(255)
+    telefono NVARCHAR(255),
+    correociclista NVARCHAR(255),
+    contraseñaciclista NVARCHAR(255)
 );
 
 
